@@ -1,0 +1,98 @@
+sources:
+  - name: nba
+    tables:
+      - name: teams
+
+models:
+  - name: stg_teams
+    description: "This table contains the staging data for NBA teams."
+    columns:
+      - name: id_teams
+        description: "The unique identifier for each NBA team."
+        tests:
+          - not_null
+          - unique
+      - name: team_name
+        description: "The full name of the NBA team."
+        tests:
+          - not_null
+      - name: abbreviation
+        description: "The abbreviation of the NBA team."
+      - name: nickname
+        description: "The nickname of the NBA team."
+      - name: city
+        description: "The city where the NBA team is based."
+      - name: state
+        description: "The state where the NBA team is based."
+      - name: year_founded
+        description: "The year the NBA team was founded."
+
+  - name: stg_players
+    description: "This table contains the staging data for NBA players."
+    columns:
+      - name: id_players
+        description: "The unique identifier for each NBA player."
+        tests:
+          - not_null
+          - unique
+      - name: player_name
+        description: "The full name of the NBA player."
+      - name: first_name
+        description: "The first name of the NBA player."
+      - name: last_name
+        description: "The last name of the NBA player."
+      - name: is_active
+        description: "Indicates whether the NBA player is currently active."
+        tests:
+          - accepted_values:
+              values: [true, false]
+
+  - name: stg_games
+    description: "This table contains the staging data for NBA games."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - id_games
+            - id_teams
+    columns:
+      - name: id_seasons
+        description: "The NBA season in which the game was played."
+        tests:
+          - not_null
+      - name: id_teams
+        description: "The unique identifier for the NBA team."
+        tests:
+          - not_null
+      - name: id_games
+        description: "The unique identifier for each NBA game."
+        tests:
+          - not_null
+      - name: game_date
+        description: "The date when the NBA game was played."
+        tests:
+          - not_null
+      - name: team_name
+        description: "The name of the NBA team."
+        tests:
+          - not_null
+
+  - name: stg_player_game_logs
+    description: "This table contains the staging data for NBA player game logs."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - id_players
+            - id_games
+    columns:
+      - name: id_players
+        description: "The unique identifier for the NBA player."
+        tests:
+          - not_null
+      - name: id_games
+        description: "The unique identifier for the NBA game."
+        tests:
+          - not_null
+      - name: id_teams
+        description: "The unique identifier for the NBA team."
+        tests:
+          - not_null
